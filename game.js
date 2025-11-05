@@ -94,7 +94,7 @@ function init() {
 
     // Show follow-up message after a pause
     setTimeout(() => {
-        showCaption("Go forward when you're ready. I'm at your back.", 0);
+        showCaption("Go forward when you're ready. I got your back.", 0);
         // Create the door after this message
         createDoor();
     }, 4000);
