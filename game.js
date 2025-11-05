@@ -19,7 +19,7 @@ let door = null;
 // Phase management
 const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
-    2: { caption: "Choose the color that feels like you.", prompt: "Move the ball to touch a color" },
+    2: { caption: "Choose the color that feels like you.", prompt: "Move near a color and click to select" },
     3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully • Reach the door on the right" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
@@ -275,7 +275,13 @@ function onMouseMove(event) {
 
 // Click handler
 function onClick(event) {
-    // No click handling needed in current phases
+    if (currentPhase === 2) {
+        // Check if there's a color sphere in range
+        const inRangeSphere = colorSpheres.find(sphere => sphere.userData.inRange);
+        if (inRangeSphere) {
+            selectColor(inRangeSphere.userData.color);
+        }
+    }
 }
 
 // Window resize handler
@@ -789,17 +795,21 @@ function animate() {
             sphere.userData.time += 0.02;
             sphere.position.y = sphere.userData.baseY + Math.sin(sphere.userData.time) * 0.2;
 
-            // Check collision with player ball
+            // Check proximity with player ball
             const distance = player.position.distanceTo(sphere.position);
-            if (distance < 1.2) {  // Player sphere radius (0.5) + color sphere radius (0.6) + small buffer
-                // Player touched the color sphere!
-                selectColor(sphere.userData.color);
-            }
 
-            // Glow effect when player is near
-            if (distance < 2) {
+            // Store if this sphere is in selection range
+            sphere.userData.inRange = distance < 1.5;
+
+            // Make sphere lighter when player is near
+            if (sphere.userData.inRange) {
+                // Brighten the color - multiply by 1.3 to make it lighter
+                const baseColor = new THREE.Color(sphere.userData.color);
+                sphere.material.color.copy(baseColor).multiplyScalar(1.3);
                 sphere.material.emissiveIntensity = 0.5;
             } else {
+                // Reset to original color
+                sphere.material.color.setHex(sphere.userData.color);
                 sphere.material.emissiveIntensity = 0.2;
             }
         });
