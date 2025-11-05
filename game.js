@@ -610,7 +610,7 @@ function startPhase4() {
     scene.add(bridge);
 
     // Create glowing door on the right side (start invisible, will fade in)
-    const doorGeometry = new THREE.BoxGeometry(3, 4, 0.5);
+    const doorGeometry = new THREE.BoxGeometry(0.5, 4, 1.5);
     const doorMaterial = new THREE.MeshStandardMaterial({
         color: 0xffd700,
         emissive: 0xffd700,
