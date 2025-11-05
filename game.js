@@ -402,11 +402,9 @@ function selectColor(color) {
     // Create ripple effect
     createRipple();
 
-    // Fade out unchosen spheres
+    // Fade out all spheres (including the chosen one)
     colorSpheres.forEach(sphere => {
-        if (sphere.userData.color !== color) {
-            fadeOutSphere(sphere);
-        }
+        fadeOutSphere(sphere);
     });
 
     hidePrompt();
