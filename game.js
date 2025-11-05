@@ -275,11 +275,16 @@ function onMouseMove(event) {
 
 // Click handler
 function onClick(event) {
-    if (currentPhase === 2) {
-        // Check if there's a hovered color sphere
-        const hoveredSphere = colorSpheres.find(sphere => sphere.userData.isHovered);
-        if (hoveredSphere) {
-            selectColor(hoveredSphere.userData.color);
+    if (currentPhase === 2 && colorSpheres.length > 0) {
+        // Use raycaster to detect click on color spheres
+        const raycaster = new THREE.Raycaster();
+        const mouseVec = new THREE.Vector2(mouse.x, mouse.y);
+        raycaster.setFromCamera(mouseVec, camera);
+
+        const intersects = raycaster.intersectObjects(colorSpheres);
+        if (intersects.length > 0) {
+            const clickedSphere = intersects[0].object;
+            selectColor(clickedSphere.userData.color);
         }
     }
 }
