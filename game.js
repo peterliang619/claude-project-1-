@@ -394,9 +394,15 @@ function startPhase2() {
     });
 
     showCaption(phases[2].caption);
+
+    // Show apology caption after the initial caption
+    setTimeout(() => {
+        showCaption("Sorry if your color is not here.", 0);
+    }, 3500);
+
     setTimeout(() => {
         showPrompt(phases[2].prompt);
-    }, 2000);
+    }, 5000);
 }
 
 // Select a color
@@ -418,15 +424,10 @@ function selectColor(color) {
 
     // Show new caption
     setTimeout(() => {
-        showCaption("Always be who you are, we love you.", 0);
+        showCaption("Always be who you are, I love you.", 0);
     }, 500);
 
-    // Show apology caption
-    setTimeout(() => {
-        showCaption("Sorry if your color is not here.", 0);
-    }, 3500);
-
-    // Create door at the top after both captions
+    // Create door at the top after caption
     setTimeout(() => {
         const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
         const doorMaterial = new THREE.MeshStandardMaterial({
@@ -460,7 +461,7 @@ function selectColor(color) {
                 clearInterval(fadeIn);
             }
         }, 30);
-    }, 6000);
+    }, 3500);
 }
 
 // Create ripple effect
