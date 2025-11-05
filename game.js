@@ -278,7 +278,7 @@ function onMouseMove(event) {
         targetPosition.z = pos.z;
 
         // Limit movement range
-        const maxRange = currentPhase === 4 ? 20 : 8;
+        const maxRange = currentPhase === 4 ? 12 : 8;
         targetPosition.x = Math.max(-maxRange, Math.min(maxRange, targetPosition.x));
         targetPosition.z = Math.max(-maxRange, Math.min(maxRange, targetPosition.z));
     }
@@ -569,9 +569,9 @@ function startPhase4() {
         yellowSphere = null;
     }
 
-    // Reset player position - start on far left
-    player.position.set(-18, 0.5, 0);
-    targetPosition.x = -18;
+    // Reset player position - start closer to center
+    player.position.set(-10, 0.5, 0);
+    targetPosition.x = -10;
     targetPosition.z = 0;
 
     // Remove ground and add reflective plane
@@ -594,8 +594,8 @@ function startPhase4() {
     reflectivePlane.receiveShadow = true;
     scene.add(reflectivePlane);
 
-    // Create bridge extending across entire page
-    const bridgeGeometry = new THREE.BoxGeometry(40, 0.2, 1.5);
+    // Create bridge - shorter and more centered
+    const bridgeGeometry = new THREE.BoxGeometry(25, 0.2, 1.5);
     const bridgeMaterial = new THREE.MeshStandardMaterial({
         color: 0xf0f0f0,
         emissive: playerColor,
@@ -621,7 +621,7 @@ function startPhase4() {
         opacity: 0
     });
     door = new THREE.Mesh(doorGeometry, doorMaterial);
-    door.position.set(17, 2, 0);
+    door.position.set(10, 2, 0);
     door.castShadow = true;
     scene.add(door);
 
@@ -658,21 +658,23 @@ function startPhase4() {
 function checkBridgeBounds() {
     if (currentPhase === 4 && bridge) {
         const onBridge = Math.abs(player.position.z) < 0.75 &&
-                        player.position.x > -20 &&
-                        player.position.x < 20;
+                        player.position.x > -12.5 &&
+                        player.position.x < 12.5;
 
         if (!onBridge && player.position.y > -5) {
-            // Player fell off
-            player.position.y -= 0.05;
-            player.material.opacity = Math.max(0, player.material.opacity - 0.02);
+            // Player fell off - faster fall
+            player.position.y -= 0.15;
+            player.material.opacity = Math.max(0, player.material.opacity - 0.06);
             player.material.transparent = true;
 
             if (player.position.y <= -5) {
-                // Reset
-                player.position.set(-18, 0.5, 0);
+                // Reset - respawn closer to center
+                player.position.set(-10, 0.5, 0);
                 player.material.opacity = 1.0;
-                targetPosition.x = -18;
+                targetPosition.x = -10;
                 targetPosition.z = 0;
+                // Restart pause timer for respawn
+                phase4StartTime = Date.now();
             }
         } else if (door) {
             // Check if player reached the door
