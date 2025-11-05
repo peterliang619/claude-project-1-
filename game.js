@@ -636,9 +636,9 @@ function startPhase4() {
     // Create glowing door on the right side (start invisible, will fade in)
     const doorGeometry = new THREE.BoxGeometry(0.5, 4, 1.5);
     const doorMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffd700,
-        emissive: 0xffd700,
-        emissiveIntensity: 1.5,
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.5,
         roughness: 0.2,
         metalness: 0.3,
         transparent: true,
@@ -650,7 +650,7 @@ function startPhase4() {
     scene.add(door);
 
     // Add a point light to make the door glow
-    const doorLight = new THREE.PointLight(0xffd700, 0, 15);
+    const doorLight = new THREE.PointLight(0xffffff, 0, 15);
     doorLight.position.copy(door.position);
     door.userData.light = doorLight;
     scene.add(doorLight);
