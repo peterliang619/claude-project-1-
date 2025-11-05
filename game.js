@@ -638,9 +638,9 @@ function startPhase4() {
     const doorMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
-        emissiveIntensity: 0.5,
-        roughness: 0.2,
-        metalness: 0.3,
+        emissiveIntensity: 0.8,
+        roughness: 0.6,
+        metalness: 0.1,
         transparent: true,
         opacity: 0
     });
@@ -650,7 +650,7 @@ function startPhase4() {
     scene.add(door);
 
     // Add a point light to make the door glow
-    const doorLight = new THREE.PointLight(0xffffff, 0, 15);
+    const doorLight = new THREE.PointLight(0xffffff, 1, 10);
     doorLight.position.copy(door.position);
     door.userData.light = doorLight;
     scene.add(doorLight);
