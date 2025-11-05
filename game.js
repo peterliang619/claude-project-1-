@@ -19,7 +19,7 @@ let door = null;
 // Phase management
 const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
-    2: { caption: "Choose the color that feels like you.", prompt: "Hover and click a color sphere" },
+    2: { caption: "Choose the color that feels like you.", prompt: "Hover over a color sphere to select it" },
     3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
@@ -275,18 +275,7 @@ function onMouseMove(event) {
 
 // Click handler
 function onClick(event) {
-    if (currentPhase === 2) {
-        // Check if clicking on a color sphere
-        const raycaster = new THREE.Raycaster();
-        const mouseVec = new THREE.Vector2(mouse.x, mouse.y);
-        raycaster.setFromCamera(mouseVec, camera);
-
-        const intersects = raycaster.intersectObjects(colorSpheres);
-        if (intersects.length > 0) {
-            const selectedSphere = intersects[0].object;
-            selectColor(selectedSphere.userData.color);
-        }
-    }
+    // No click handling needed in current phases
 }
 
 // Window resize handler
@@ -361,6 +350,9 @@ function updateTrails() {
 // Phase 2: Create color selection spheres
 function startPhase2() {
     currentPhase = 2;
+
+    // Ensure camera is looking at center where player is
+    camera.lookAt(0, 0, 0);
 
     // Clear fog slightly
     scene.fog.near = 15;
@@ -718,7 +710,7 @@ function animate() {
                 sphere.userData.time += 0.02;
                 sphere.position.y = sphere.userData.baseY + Math.sin(sphere.userData.time) * 0.2;
 
-                // Hover glow effect (detect mouse proximity)
+                // Hover glow effect and selection (detect mouse proximity)
                 const spherePos = sphere.position.clone().project(camera);
                 const dx = spherePos.x - mouse.x;
                 const dy = spherePos.y - mouse.y;
@@ -726,8 +718,22 @@ function animate() {
 
                 if (distance < 0.3) {
                     sphere.material.emissiveIntensity = 0.5;
+
+                    // Initialize hover counter if not exists
+                    if (!sphere.userData.hoverTime) {
+                        sphere.userData.hoverTime = 0;
+                    }
+
+                    // Increment hover time
+                    sphere.userData.hoverTime += 1;
+
+                    // Select after hovering for ~1 second (60 frames at 60fps)
+                    if (sphere.userData.hoverTime > 60) {
+                        selectColor(sphere.userData.color);
+                    }
                 } else {
                     sphere.material.emissiveIntensity = 0.2;
+                    sphere.userData.hoverTime = 0; // Reset hover time
                 }
             } else {
                 // Fade out
