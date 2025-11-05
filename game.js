@@ -393,7 +393,8 @@ function startPhase2() {
         colorSpheres.push(sphere);
     });
 
-    showCaption(phases[2].caption);
+    // Show first caption and keep it visible
+    showCaption(phases[2].caption, 0);
 
     // Show apology caption after the initial caption
     setTimeout(() => {
