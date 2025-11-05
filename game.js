@@ -387,13 +387,17 @@ function startPhase2() {
             emissive: colorData.color,
             emissiveIntensity: 0.2,
             roughness: 0.5,
-            metalness: 0.2
+            metalness: 0.2,
+            transparent: true,
+            opacity: 0
         });
         const sphere = new THREE.Mesh(geometry, material);
         sphere.position.set(colorData.position.x, colorData.position.y, colorData.position.z);
         sphere.userData.color = colorData.color;
         sphere.userData.baseY = colorData.position.y;
         sphere.userData.time = Math.random() * Math.PI * 2;
+        sphere.userData.fadingIn = true;
+        sphere.userData.targetOpacity = 1.0;
         scene.add(sphere);
         colorSpheres.push(sphere);
     });
@@ -835,17 +839,26 @@ function animate() {
             sphere.userData.time += 0.02;
             sphere.position.y = sphere.userData.baseY + Math.sin(sphere.userData.time) * 0.2;
 
+            // Fade in animation
+            if (sphere.userData.fadingIn) {
+                sphere.material.opacity += 0.015;
+                if (sphere.material.opacity >= sphere.userData.targetOpacity) {
+                    sphere.material.opacity = sphere.userData.targetOpacity;
+                    sphere.userData.fadingIn = false;
+                }
+            }
+
             // Check if this sphere is being hovered
             const isHovered = sphere === hoveredSphere;
             sphere.userData.isHovered = isHovered;
 
             // Make sphere lighter when cursor hovers over it
-            if (isHovered) {
+            if (isHovered && !sphere.userData.fadingIn) {
                 // Brighten the color - multiply by 1.3 to make it lighter
                 const baseColor = new THREE.Color(sphere.userData.color);
                 sphere.material.color.copy(baseColor).multiplyScalar(1.3);
                 sphere.material.emissiveIntensity = 0.5;
-            } else {
+            } else if (!sphere.userData.fadingIn) {
                 // Reset to original color
                 sphere.material.color.setHex(sphere.userData.color);
                 sphere.material.emissiveIntensity = 0.2;
