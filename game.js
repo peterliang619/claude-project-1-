@@ -117,10 +117,12 @@ function createPlayer() {
     ctx.beginPath();
     ctx.arc(332, 200, 20, 0, Math.PI * 2);
     ctx.fill();
-    // Sad mouth
-    ctx.beginPath();
-    ctx.arc(256, 340, 80, 0.2 * Math.PI, 0.8 * Math.PI);
+    // Sad mouth :( - downward curve
+    ctx.strokeStyle = '#404040';
     ctx.lineWidth = 15;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(256, 280, 60, 0.3 * Math.PI, 0.7 * Math.PI);
     ctx.stroke();
 
     const texture = new THREE.CanvasTexture(canvas);
@@ -163,35 +165,40 @@ function updatePlayerFace(faceType) {
         ctx.beginPath();
         ctx.arc(332, 200, 20, 0, Math.PI * 2);
         ctx.fill();
-        // Sad mouth
-        ctx.beginPath();
-        ctx.arc(256, 340, 80, 0.2 * Math.PI, 0.8 * Math.PI);
+        // Sad mouth :( - downward curve
+        ctx.strokeStyle = '#' + faceColor.getHexString();
         ctx.lineWidth = 15;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(256, 280, 60, 0.3 * Math.PI, 0.7 * Math.PI);
         ctx.stroke();
     } else if (faceType === 'neutral') {
         // Left eye
         ctx.beginPath();
-        ctx.arc(180, 220, 22, 0, Math.PI * 2);
+        ctx.arc(180, 210, 20, 0, Math.PI * 2);
         ctx.fill();
         // Right eye
         ctx.beginPath();
-        ctx.arc(332, 220, 22, 0, Math.PI * 2);
+        ctx.arc(332, 210, 20, 0, Math.PI * 2);
         ctx.fill();
-        // Neutral mouth
-        ctx.fillRect(200, 310, 112, 12);
+        // Neutral mouth - straight line
+        ctx.fillStyle = '#' + faceColor.getHexString();
+        ctx.fillRect(200, 300, 112, 12);
     } else if (faceType === 'happy') {
         // Left eye
         ctx.beginPath();
-        ctx.arc(180, 200, 22, 0, Math.PI * 2);
+        ctx.arc(180, 200, 20, 0, Math.PI * 2);
         ctx.fill();
         // Right eye
         ctx.beginPath();
-        ctx.arc(332, 200, 22, 0, Math.PI * 2);
+        ctx.arc(332, 200, 20, 0, Math.PI * 2);
         ctx.fill();
-        // Happy mouth
-        ctx.beginPath();
-        ctx.arc(256, 280, 80, 1.2 * Math.PI, 1.8 * Math.PI);
+        // Happy mouth :) - upward curve
+        ctx.strokeStyle = '#' + faceColor.getHexString();
         ctx.lineWidth = 15;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(256, 320, 60, 1.3 * Math.PI, 1.7 * Math.PI);
         ctx.stroke();
     }
 
