@@ -824,8 +824,8 @@ function addSmilingFace() {
     ctx.fillStyle = `rgb(${Math.round(playerColor.r * 255)}, ${Math.round(playerColor.g * 255)}, ${Math.round(playerColor.b * 255)})`;
     ctx.fillRect(0, 0, 256, 256);
 
-    // Draw eyes
-    ctx.fillStyle = '#000000';
+    // Draw eyes (gray color)
+    ctx.fillStyle = '#505050';
     ctx.beginPath();
     ctx.arc(85, 90, 12, 0, Math.PI * 2);
     ctx.fill();
@@ -833,11 +833,11 @@ function addSmilingFace() {
     ctx.arc(171, 90, 12, 0, Math.PI * 2);
     ctx.fill();
 
-    // Draw smiling mouth (curve inward)
-    ctx.strokeStyle = '#000000';
+    // Draw smiling mouth (shorter and gray)
+    ctx.strokeStyle = '#505050';
     ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.arc(128, 128, 50, 0, Math.PI, false); // Upward curve for smile
+    ctx.arc(128, 128, 35, 0, Math.PI, false); // Shorter smile (35 instead of 50)
     ctx.stroke();
 
     // Create texture from canvas
