@@ -15,6 +15,8 @@ let graySelf = null;
 let hasMerged = false;
 let isAscending = false;
 let door = null;
+let phase4StartTime = null;
+let phase4PauseDuration = 3000; // 3 seconds pause
 
 // Phase management
 const phases = {
@@ -257,6 +259,15 @@ function onMouseMove(event) {
 
     // Convert mouse position to 3D world position
     if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3 || currentPhase === 4 || currentPhase === 5) {
+        // Check if Phase 4 is in pause period
+        if (currentPhase === 4 && phase4StartTime) {
+            const elapsed = Date.now() - phase4StartTime;
+            if (elapsed < phase4PauseDuration) {
+                // Still in pause, don't update target position
+                return;
+            }
+        }
+
         const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
         vector.unproject(camera);
         const dir = vector.sub(camera.position).normalize();
@@ -550,6 +561,7 @@ function startPhase3() {
 // Phase 4: The Bridge
 function startPhase4() {
     currentPhase = 4;
+    phase4StartTime = Date.now(); // Start pause timer
 
     // Remove any remaining objects
     if (yellowSphere) {
@@ -636,9 +648,10 @@ function startPhase4() {
     scene.fog = null;
 
     showCaption(phases[4].caption);
+    // Show prompt after the 3-second pause
     setTimeout(() => {
         showPrompt(phases[4].prompt);
-    }, 2000);
+    }, phase4PauseDuration);
 }
 
 // Check if player is on bridge
