@@ -16,7 +16,7 @@ let hasMerged = false;
 let isAscending = false;
 let door = null;
 let phase4StartTime = null;
-let phase4PauseDuration = 3000; // 3 seconds pause
+let phase4PauseDuration = 2000; // 2 seconds pause
 
 // Phase management
 const phases = {
