@@ -1107,6 +1107,9 @@ function animate() {
 
     if (currentPhase === 5) {
         checkGraySelfProximity();
+
+        // Make player ball face the camera so the face is always visible
+        player.lookAt(camera.position);
     }
 
     // Update ripples
