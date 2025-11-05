@@ -610,23 +610,23 @@ function startPhase4() {
     scene.add(bridge);
 
     // Create glowing door on the right side (start invisible, will fade in)
-    const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
+    const doorGeometry = new THREE.BoxGeometry(3, 4, 0.5);
     const doorMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0xffffff,
-        emissiveIntensity: 0.8,
+        color: 0xffd700,
+        emissive: 0xffd700,
+        emissiveIntensity: 1.5,
         roughness: 0.2,
         metalness: 0.3,
         transparent: true,
         opacity: 0
     });
     door = new THREE.Mesh(doorGeometry, doorMaterial);
-    door.position.set(18, 1.5, 0);
+    door.position.set(17, 2, 0);
     door.castShadow = true;
     scene.add(door);
 
     // Add a point light to make the door glow
-    const doorLight = new THREE.PointLight(0xffffff, 0, 10);
+    const doorLight = new THREE.PointLight(0xffd700, 0, 15);
     doorLight.position.copy(door.position);
     door.userData.light = doorLight;
     scene.add(doorLight);
@@ -636,7 +636,7 @@ function startPhase4() {
         if (door && door.material.opacity < 1) {
             door.material.opacity += 0.02;
             if (door.userData.light) {
-                door.userData.light.intensity = door.material.opacity;
+                door.userData.light.intensity = door.material.opacity * 2;
             }
         } else {
             clearInterval(doorFadeIn);
@@ -677,7 +677,7 @@ function checkBridgeBounds() {
         } else if (door) {
             // Check if player reached the door
             const doorDistance = player.position.distanceTo(door.position);
-            if (doorDistance < 2) {
+            if (doorDistance < 3) {
                 // Player reached the door
                 hidePrompt();
 
