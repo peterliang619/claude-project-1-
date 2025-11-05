@@ -19,7 +19,7 @@ let door = null;
 // Phase management
 const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
-    2: { caption: "Choose the color that feels like you.", prompt: "Hover over a color sphere to select it" },
+    2: { caption: "Choose the color that feels like you.", prompt: "Move the ball to touch a color" },
     3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully • Reach the door on the right" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
@@ -256,7 +256,7 @@ function onMouseMove(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     // Convert mouse position to 3D world position
-    if (currentPhase === 1 || currentPhase === 3 || currentPhase === 4 || currentPhase === 5) {
+    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3 || currentPhase === 4 || currentPhase === 5) {
         const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
         vector.unproject(camera);
         const dir = vector.sub(camera.position).normalize();
@@ -410,10 +410,46 @@ function selectColor(color) {
 
     hidePrompt();
 
-    // Transition to Phase 3
+    // Show new caption
     setTimeout(() => {
-        startPhase3();
-    }, 2000);
+        showCaption("Always be who you are, we love you.", 0);
+    }, 500);
+
+    // Create door at the top after a pause
+    setTimeout(() => {
+        const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
+        const doorMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            emissive: 0xffffff,
+            emissiveIntensity: 0.8,
+            roughness: 0.2,
+            metalness: 0.3,
+            transparent: true,
+            opacity: 0
+        });
+        door = new THREE.Mesh(doorGeometry, doorMaterial);
+        door.position.set(0, 1.5, -8); // Position at the top (back) of the screen
+        door.castShadow = true;
+        scene.add(door);
+
+        // Add a point light to make it glow
+        const doorLight = new THREE.PointLight(0xffffff, 0, 10);
+        doorLight.position.copy(door.position);
+        door.userData.light = doorLight;
+        scene.add(doorLight);
+
+        // Fade in the door
+        let fadeIn = setInterval(() => {
+            if (door && door.material.opacity < 1) {
+                door.material.opacity += 0.02;
+                if (door.userData.light) {
+                    door.userData.light.intensity = door.material.opacity;
+                }
+            } else {
+                clearInterval(fadeIn);
+            }
+        }, 30);
+    }, 1500);
 }
 
 // Create ripple effect
@@ -519,7 +555,7 @@ function startPhase4() {
     bridge.receiveShadow = true;
     scene.add(bridge);
 
-    // Create glowing door on the right side
+    // Create glowing door on the right side (start invisible, will fade in)
     const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
     const doorMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
@@ -528,7 +564,7 @@ function startPhase4() {
         roughness: 0.2,
         metalness: 0.3,
         transparent: true,
-        opacity: 1
+        opacity: 0
     });
     door = new THREE.Mesh(doorGeometry, doorMaterial);
     door.position.set(18, 1.5, 0);
@@ -536,10 +572,22 @@ function startPhase4() {
     scene.add(door);
 
     // Add a point light to make the door glow
-    const doorLight = new THREE.PointLight(0xffffff, 1, 10);
+    const doorLight = new THREE.PointLight(0xffffff, 0, 10);
     doorLight.position.copy(door.position);
     door.userData.light = doorLight;
     scene.add(doorLight);
+
+    // Fade in the door
+    let doorFadeIn = setInterval(() => {
+        if (door && door.material.opacity < 1) {
+            door.material.opacity += 0.02;
+            if (door.userData.light) {
+                door.userData.light.intensity = door.material.opacity;
+            }
+        } else {
+            clearInterval(doorFadeIn);
+        }
+    }, 30);
 
     // Change background to white
     scene.background = new THREE.Color(0xfafafa);
@@ -738,50 +786,41 @@ function animate() {
     if (currentPhase === 2) {
         // Animate color spheres (gentle floating)
         colorSpheres.forEach(sphere => {
-            if (!sphere.userData.fadingOut) {
-                sphere.userData.time += 0.02;
-                sphere.position.y = sphere.userData.baseY + Math.sin(sphere.userData.time) * 0.2;
+            sphere.userData.time += 0.02;
+            sphere.position.y = sphere.userData.baseY + Math.sin(sphere.userData.time) * 0.2;
 
-                // Hover glow effect and selection (detect mouse proximity)
-                const spherePos = sphere.position.clone().project(camera);
-                const dx = spherePos.x - mouse.x;
-                const dy = spherePos.y - mouse.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+            // Check collision with player ball
+            const distance = player.position.distanceTo(sphere.position);
+            if (distance < 1.2) {  // Player sphere radius (0.5) + color sphere radius (0.6) + small buffer
+                // Player touched the color sphere!
+                selectColor(sphere.userData.color);
+            }
 
-                if (distance < 0.3) {
-                    sphere.material.emissiveIntensity = 0.5;
-
-                    // Initialize hover counter if not exists
-                    if (!sphere.userData.hoverTime) {
-                        sphere.userData.hoverTime = 0;
-                    }
-
-                    // Increment hover time
-                    sphere.userData.hoverTime += 1;
-
-                    // Select after hovering for ~1 second (60 frames at 60fps)
-                    if (sphere.userData.hoverTime > 60) {
-                        selectColor(sphere.userData.color);
-                    }
-                } else {
-                    sphere.material.emissiveIntensity = 0.2;
-                    sphere.userData.hoverTime = 0; // Reset hover time
-                }
+            // Glow effect when player is near
+            if (distance < 2) {
+                sphere.material.emissiveIntensity = 0.5;
             } else {
-                // Fade out
-                sphere.material.opacity -= 0.02;
-                sphere.material.transparent = true;
-                if (sphere.material.opacity <= 0) {
-                    scene.remove(sphere);
-                }
+                sphere.material.emissiveIntensity = 0.2;
             }
         });
 
-        // Check if ready for Phase 3
-        if (colorSpheres.length > 0 && colorSpheres.every(s => s.userData.fadingOut)) {
-            const allFaded = colorSpheres.every(s => s.material.opacity <= 0);
-            if (allFaded) {
-                colorSpheres = [];
+        // Check door collision after color selection
+        if (door && colorSpheres.length === 0) {
+            const doorDistance = player.position.distanceTo(door.position);
+            if (doorDistance < 2) {
+                // Player touched the door - go to Phase 3
+                hidePrompt();
+
+                // Fade out door
+                if (door.userData.light) {
+                    scene.remove(door.userData.light);
+                }
+                scene.remove(door);
+                door = null;
+
+                setTimeout(() => {
+                    startPhase3();
+                }, 500);
             }
         }
     }
