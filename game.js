@@ -17,7 +17,7 @@ let isAscending = false;
 
 // Phase management
 const phases = {
-    1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere" },
+    1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Click anywhere when ready to continue" },
     2: { caption: "Choose the color that feels like you.", prompt: "Click a color sphere" },
     3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully" },
@@ -225,7 +225,13 @@ function onMouseMove(event) {
 
 // Click handler
 function onClick(event) {
-    if (currentPhase === 2) {
+    if (currentPhase === 1) {
+        // Click to proceed to Phase 2
+        hidePrompt();
+        setTimeout(() => {
+            startPhase2();
+        }, 1000);
+    } else if (currentPhase === 2) {
         // Check if clicking on a color sphere
         const raycaster = new THREE.Raycaster();
         const mouseVec = new THREE.Vector2(mouse.x, mouse.y);
@@ -763,18 +769,6 @@ function animate() {
             scene.remove(ripple);
         }
     });
-
-    // Phase transitions based on time/position
-    if (currentPhase === 1) {
-        // Move to Phase 2 after some exploration
-        const distanceMoved = Math.sqrt(player.position.x ** 2 + player.position.z ** 2);
-        if (distanceMoved > 3) {
-            hidePrompt();
-            setTimeout(() => {
-                startPhase2();
-            }, 2000);
-        }
-    }
 
     renderer.render(scene, camera);
 }
