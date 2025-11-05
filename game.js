@@ -19,7 +19,7 @@ let door = null;
 // Phase management
 const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
-    2: { caption: "Choose the color that feels like you.", prompt: "Move near a color and click to select" },
+    2: { caption: "Choose the color that feels like you.", prompt: "Hover over a color and click to select" },
     3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully • Reach the door on the right" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
@@ -276,10 +276,10 @@ function onMouseMove(event) {
 // Click handler
 function onClick(event) {
     if (currentPhase === 2) {
-        // Check if there's a color sphere in range
-        const inRangeSphere = colorSpheres.find(sphere => sphere.userData.inRange);
-        if (inRangeSphere) {
-            selectColor(inRangeSphere.userData.color);
+        // Check if there's a hovered color sphere
+        const hoveredSphere = colorSpheres.find(sphere => sphere.userData.isHovered);
+        if (hoveredSphere) {
+            selectColor(hoveredSphere.userData.color);
         }
     }
 }
@@ -393,17 +393,17 @@ function startPhase2() {
         colorSpheres.push(sphere);
     });
 
-    // Show first caption with shorter duration
-    showCaption(phases[2].caption, 2000);
+    // Show first caption with longer duration for slower fade
+    showCaption(phases[2].caption, 3000);
 
     // Show apology caption after the first fades out
     setTimeout(() => {
         showCaption("Sorry if your color is not here.", 0);
-    }, 2300);
+    }, 3500);
 
     setTimeout(() => {
         showPrompt(phases[2].prompt);
-    }, 4500);
+    }, 6000);
 }
 
 // Select a color
@@ -797,19 +797,25 @@ function animate() {
 
     // Phase-specific updates
     if (currentPhase === 2) {
+        // Use raycaster to detect mouse hover over color spheres
+        const raycaster = new THREE.Raycaster();
+        const mouseVec = new THREE.Vector2(mouse.x, mouse.y);
+        raycaster.setFromCamera(mouseVec, camera);
+
+        const intersects = raycaster.intersectObjects(colorSpheres);
+        const hoveredSphere = intersects.length > 0 ? intersects[0].object : null;
+
         // Animate color spheres (gentle floating)
         colorSpheres.forEach(sphere => {
             sphere.userData.time += 0.02;
             sphere.position.y = sphere.userData.baseY + Math.sin(sphere.userData.time) * 0.2;
 
-            // Check proximity with player ball
-            const distance = player.position.distanceTo(sphere.position);
+            // Check if this sphere is being hovered
+            const isHovered = sphere === hoveredSphere;
+            sphere.userData.isHovered = isHovered;
 
-            // Store if this sphere is in selection range
-            sphere.userData.inRange = distance < 1.5;
-
-            // Make sphere lighter when player is near
-            if (sphere.userData.inRange) {
+            // Make sphere lighter when cursor hovers over it
+            if (isHovered) {
                 // Brighten the color - multiply by 1.3 to make it lighter
                 const baseColor = new THREE.Color(sphere.userData.color);
                 sphere.material.color.copy(baseColor).multiplyScalar(1.3);
