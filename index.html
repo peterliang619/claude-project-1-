@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditative Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8e8e8;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #caption {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(80, 80, 80, 0);
+            font-size: 24px;
+            font-weight: 300;
+            text-align: center;
+            pointer-events: none;
+            transition: color 2s ease;
+            z-index: 100;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+
+        #caption.visible {
+            color: rgba(80, 80, 80, 1);
+        }
+
+        #interaction-prompt {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(100, 100, 100, 0);
+            font-size: 14px;
+            font-weight: 300;
+            text-align: center;
+            pointer-events: none;
+            transition: color 1.5s ease;
+            z-index: 100;
+        }
+
+        #interaction-prompt.visible {
+            color: rgba(100, 100, 100, 0.7);
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="caption"></div>
+    <div id="interaction-prompt"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
