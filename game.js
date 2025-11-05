@@ -439,13 +439,13 @@ function startPhase2() {
 
     // Wait a moment before showing first caption (like Phase 1)
     setTimeout(() => {
-        showCaption(phases[2].caption);
+        showCaption(phases[2].caption, 2000); // Shorter duration - 2 seconds
     }, 500);
 
     // Show apology caption after first caption (matching Phase 1 pattern)
     setTimeout(() => {
         showCaption("Sorry if your color is not here.", 0);
-    }, 4000);
+    }, 2500);
 
     // Show prompt (matching Phase 1 timing)
     setTimeout(() => {
