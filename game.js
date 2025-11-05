@@ -1108,8 +1108,14 @@ function animate() {
     if (currentPhase === 5) {
         checkGraySelfProximity();
 
-        // Make player ball face the camera so the face is always visible
-        player.lookAt(camera.position);
+        // Make player ball face the camera during dialogue (pause period)
+        if (phase5StartTime) {
+            const elapsed = Date.now() - phase5StartTime;
+            if (elapsed < phase5PauseDuration) {
+                // Still in dialogue, face camera so smile is visible
+                player.lookAt(camera.position);
+            }
+        }
     }
 
     // Update ripples
