@@ -935,9 +935,16 @@ function animate() {
             hidePrompt();
             scene.remove(yellowSphere);
             yellowSphere = null;
+
+            // Show second caption after first one
+            setTimeout(() => {
+                showCaption("But we need to get through it.", 3000);
+            }, 3500);
+
+            // Transition to Phase 4
             setTimeout(() => {
                 startPhase4();
-            }, 4000);
+            }, 7500);
         }
     }
 
