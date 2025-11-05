@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meditative Journey</title>
+    <title>SELF.</title>
     <style>
         * {
             margin: 0;
@@ -77,16 +77,29 @@
             cursor: pointer;
             z-index: 1000;
             transition: opacity 1.5s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #start-screen.hidden {
             opacity: 0;
             pointer-events: none;
         }
+
+        #start-title {
+            font-size: 48px;
+            font-weight: 200;
+            color: rgba(80, 80, 80, 0.8);
+            letter-spacing: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
     </style>
 </head>
 <body>
-    <div id="start-screen"></div>
+    <div id="start-screen">
+        <div id="start-title">SELF.</div>
+    </div>
 
     <div id="canvas-container"></div>
     <div id="caption"></div>
