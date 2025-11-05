@@ -319,18 +319,31 @@ function onWindowResize() {
 }
 
 // Show caption text
-function showCaption(text, duration = 3000) {
+function showCaption(text, duration = 3000, color = null) {
     const caption = document.getElementById('caption');
     caption.textContent = text;
     caption.classList.remove('visible');
 
-    setTimeout(() => {
-        caption.classList.add('visible');
-    }, 100);
+    // Set custom color if provided
+    if (color) {
+        caption.style.color = `rgba(${color.r}, ${color.g}, ${color.b}, 0)`;
+        setTimeout(() => {
+            caption.style.color = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
+            caption.classList.add('visible');
+        }, 100);
+    } else {
+        // Default gray color
+        setTimeout(() => {
+            caption.classList.add('visible');
+        }, 100);
+    }
 
     if (duration > 0) {
         setTimeout(() => {
             caption.classList.remove('visible');
+            if (color) {
+                caption.style.color = `rgba(${color.r}, ${color.g}, ${color.b}, 0)`;
+            }
         }, duration);
     }
 }
@@ -712,12 +725,19 @@ function checkBridgeBounds() {
 // Phase 5: Reunion and Ascension
 function startPhase5() {
     currentPhase = 5;
-    phase5StartTime = Date.now(); // Start 3-second pause
+    phase5StartTime = Date.now(); // Start pause until after "Can we hug?"
+    phase5PauseDuration = 17500; // Pause for entire dialogue sequence
 
     // Remove bridge
     if (bridge) {
         scene.remove(bridge);
         bridge = null;
+    }
+
+    // Remove door if it exists
+    if (door) {
+        scene.remove(door);
+        door = null;
     }
 
     // Reset player position
@@ -737,10 +757,45 @@ function startPhase5() {
     graySelf.castShadow = true;
     scene.add(graySelf);
 
-    showCaption(phases[5].caption, 0); // Keep visible
+    // Get player color as RGB
+    const playerColorRGB = {
+        r: Math.round(playerColor.r * 255),
+        g: Math.round(playerColor.g * 255),
+        b: Math.round(playerColor.b * 255)
+    };
+
+    const grayColorRGB = { r: 80, g: 80, b: 80 };
+
+    // Dialogue sequence
+    // "You've changed." - gray
     setTimeout(() => {
-        showPrompt(phases[5].prompt);
-    }, 2000);
+        showCaption("You've changed.", 3000, grayColorRGB);
+    }, 500);
+
+    // "I had to." - player color
+    setTimeout(() => {
+        showCaption("I had to.", 3000, playerColorRGB);
+    }, 3500);
+
+    // "Was it hard?" - gray
+    setTimeout(() => {
+        showCaption("Was it hard?", 3000, grayColorRGB);
+    }, 7000);
+
+    // "Yes… but I kept going." - player color
+    setTimeout(() => {
+        showCaption("Yes… but I kept going.", 3000, playerColorRGB);
+    }, 10500);
+
+    // "Can we hug?" - gray
+    setTimeout(() => {
+        showCaption("Can we hug?", 0, grayColorRGB);
+    }, 14000);
+
+    // Show prompt after dialogue
+    setTimeout(() => {
+        showPrompt("Move towards your past self");
+    }, 17500);
 }
 
 // Check proximity to gray self
@@ -759,6 +814,58 @@ function checkGraySelfProximity() {
 
 // Merge spheres and ascend
 function mergeSpheres() {
+    const grayColorRGB = { r: 80, g: 80, b: 80 };
+
+    // Create ash particles
+    const particleCount = 30;
+    const particles = [];
+
+    for (let i = 0; i < particleCount; i++) {
+        const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const particleMaterial = new THREE.MeshStandardMaterial({
+            color: 0x808080,
+            transparent: true,
+            opacity: 0.8
+        });
+        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+
+        // Start at gray self position
+        particle.position.copy(graySelf.position);
+
+        // Random velocity for ash effect
+        particle.velocity = {
+            x: (Math.random() - 0.5) * 0.02,
+            y: Math.random() * 0.03 + 0.01,
+            z: (Math.random() - 0.5) * 0.02
+        };
+
+        scene.add(particle);
+        particles.push(particle);
+    }
+
+    // Animate ash particles
+    const particleInterval = setInterval(() => {
+        particles.forEach((particle, index) => {
+            if (particle && particle.parent) {
+                particle.position.x += particle.velocity.x;
+                particle.position.y += particle.velocity.y;
+                particle.position.z += particle.velocity.z;
+
+                particle.material.opacity -= 0.01;
+
+                if (particle.material.opacity <= 0) {
+                    scene.remove(particle);
+                    particles[index] = null;
+                }
+            }
+        });
+
+        // Clear interval when all particles are gone
+        if (particles.every(p => p === null)) {
+            clearInterval(particleInterval);
+        }
+    }, 30);
+
     // Create light effect
     const light = new THREE.PointLight(playerColor, 2, 10);
     light.position.copy(player.position);
@@ -778,10 +885,14 @@ function mergeSpheres() {
         }
     }, 30);
 
-    // Show final message
+    // Show final messages
     setTimeout(() => {
-        showCaption("Well… I will be seeing you, perhaps again, someday.", 0);
+        showCaption("Well… I will be seeing you, perhaps again, someday.", 4000, grayColorRGB);
     }, 2000);
+
+    setTimeout(() => {
+        showCaption("You were never alone.", 0, grayColorRGB);
+    }, 6500);
 
     // Start ascension
     setTimeout(() => {
