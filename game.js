@@ -99,11 +99,6 @@ function init() {
         createDoor();
     }, 4000);
 
-    // Show interaction prompt
-    setTimeout(() => {
-        showPrompt(phases[1].prompt);
-    }, 7000);
-
     // Start animation loop
     animate();
 }
@@ -446,11 +441,6 @@ function startPhase2() {
     setTimeout(() => {
         showCaption("Sorry if your color is not here.", 4000);
     }, 2500);
-
-    // Show prompt (matching Phase 1 timing)
-    setTimeout(() => {
-        showPrompt(phases[2].prompt);
-    }, 7000);
 }
 
 // Get color name from hex value
@@ -576,10 +566,6 @@ function startPhase3() {
     yellowSphere.position.set(8, 0.5, 8);
     yellowSphere.castShadow = true;
     scene.add(yellowSphere);
-
-    setTimeout(() => {
-        showPrompt(phases[3].prompt);
-    }, 1000);
 }
 
 // Phase 4: The Bridge
@@ -672,10 +658,6 @@ function startPhase4() {
     scene.fog = null;
 
     showCaption(phases[4].caption);
-    // Show prompt after the 3-second pause
-    setTimeout(() => {
-        showPrompt(phases[4].prompt);
-    }, phase4PauseDuration);
 }
 
 // Check if player is on bridge
@@ -794,11 +776,6 @@ function startPhase5() {
     setTimeout(() => {
         showCaption("Can we hug?", 0, grayColorRGB);
     }, 14000);
-
-    // Show prompt after dialogue
-    setTimeout(() => {
-        showPrompt("Move towards your past self");
-    }, 17500);
 }
 
 // Check proximity to gray self
