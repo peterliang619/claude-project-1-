@@ -444,7 +444,7 @@ function startPhase2() {
 
     // Show apology caption after first caption (matching Phase 1 pattern)
     setTimeout(() => {
-        showCaption("Sorry if your color is not here.", 0);
+        showCaption("Sorry if your color is not here.", 4000);
     }, 2500);
 
     // Show prompt (matching Phase 1 timing)
@@ -484,13 +484,13 @@ function selectColor(color) {
     // Show color name caption first
     const colorName = getColorName(color);
     setTimeout(() => {
-        showCaption(`${colorName} looks great on you...`, 0);
+        showCaption(`${colorName} looks great on you...`, 3000);
     }, 500);
 
     // Show affirmation caption after
     setTimeout(() => {
-        showCaption("Always be who you are, I love you.", 0);
-    }, 3500);
+        showCaption("Always be who you are, I love you.", 4000);
+    }, 4000);
 
     // Create door at the top after both captions
     setTimeout(() => {
@@ -930,13 +930,13 @@ function mergeSpheres() {
     }, 2000);
 
     setTimeout(() => {
-        showCaption("You were never alone.", 0, grayColorRGB);
+        showCaption("You were never alone.", 4000, grayColorRGB);
     }, 6500);
 
     // Final message
     setTimeout(() => {
-        showCaption("I love you.", 0, grayColorRGB);
-    }, 10000);
+        showCaption("I love you.", 5000, grayColorRGB);
+    }, 11000);
 }
 
 // Animation loop
