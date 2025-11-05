@@ -985,11 +985,7 @@ function animate() {
             scene.remove(door);
             door = null;
 
-            // Teleport to center and start Phase 2
-            player.position.set(0, 0.5, 0);
-            targetPosition.x = 0;
-            targetPosition.z = 0;
-
+            // Start Phase 2 without moving the ball
             setTimeout(() => {
                 startPhase2();
             }, 500);
