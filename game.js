@@ -14,11 +14,12 @@ let bridge = null;
 let graySelf = null;
 let hasMerged = false;
 let isAscending = false;
+let door = null;
 
 // Phase management
 const phases = {
-    1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Click anywhere when ready to continue" },
-    2: { caption: "Choose the color that feels like you.", prompt: "Click a color sphere" },
+    1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
+    2: { caption: "Choose the color that feels like you.", prompt: "Hover and click a color sphere" },
     3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
@@ -90,6 +91,8 @@ function init() {
     // Show follow-up message after a pause
     setTimeout(() => {
         showCaption("Go forward when you're ready. I'm at your back.", 0);
+        // Create the door after this message
+        createDoor();
     }, 4000);
 
     // Show interaction prompt
@@ -99,6 +102,39 @@ function init() {
 
     // Start animation loop
     animate();
+}
+
+// Create glowing white door
+function createDoor() {
+    const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
+    const doorMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.8,
+        roughness: 0.2,
+        metalness: 0.3,
+        transparent: true,
+        opacity: 0
+    });
+    door = new THREE.Mesh(doorGeometry, doorMaterial);
+    door.position.set(0, 1.5, -8); // Position at the top (back) of the screen
+    door.castShadow = true;
+    scene.add(door);
+
+    // Add a point light to make it glow
+    const doorLight = new THREE.PointLight(0xffffff, 1, 10);
+    doorLight.position.copy(door.position);
+    door.userData.light = doorLight;
+    scene.add(doorLight);
+
+    // Fade in the door
+    let fadeIn = setInterval(() => {
+        if (door && door.material.opacity < 1) {
+            door.material.opacity += 0.02;
+        } else {
+            clearInterval(fadeIn);
+        }
+    }, 30);
 }
 
 // Create player sphere with face
@@ -239,13 +275,7 @@ function onMouseMove(event) {
 
 // Click handler
 function onClick(event) {
-    if (currentPhase === 1) {
-        // Click to proceed to Phase 2
-        hidePrompt();
-        setTimeout(() => {
-            startPhase2();
-        }, 1000);
-    } else if (currentPhase === 2) {
+    if (currentPhase === 2) {
         // Check if clicking on a color sphere
         const raycaster = new THREE.Raycaster();
         const mouseVec = new THREE.Vector2(mouse.x, mouse.y);
@@ -339,13 +369,12 @@ function startPhase2() {
     // Change face to neutral
     updatePlayerFace('neutral');
 
-    // Create floating color spheres
+    // Create floating color spheres - positioned at top, left, right, bottom
     const colors = [
-        { color: 0xff6b6b, position: { x: -4, y: 2, z: 2 } },   // Red
-        { color: 0x4ecdc4, position: { x: 4, y: 2, z: 2 } },    // Blue
-        { color: 0xffe66d, position: { x: 0, y: 3, z: -3 } },   // Yellow
-        { color: 0x95e1d3, position: { x: -3, y: 2.5, z: -2 } }, // Green
-        { color: 0xc492e8, position: { x: 3, y: 2.5, z: -2 } }   // Purple
+        { color: 0xffe66d, position: { x: 0, y: 2.5, z: -5 } },   // Yellow (top)
+        { color: 0xff6b6b, position: { x: -5, y: 2.5, z: 0 } },   // Red (left)
+        { color: 0x4ecdc4, position: { x: 5, y: 2.5, z: 0 } },    // Blue (right)
+        { color: 0xc492e8, position: { x: 0, y: 2.5, z: 5 } }     // Purple (bottom)
     ];
 
     colors.forEach(colorData => {
@@ -655,6 +684,31 @@ function animate() {
 
     // Update trails
     updateTrails();
+
+    // Check door collision in Phase 1
+    if (currentPhase === 1 && door) {
+        const doorDistance = player.position.distanceTo(door.position);
+        if (doorDistance < 2) {
+            // Player touched the door - teleport to Phase 2
+            hidePrompt();
+
+            // Fade out door
+            if (door.userData.light) {
+                scene.remove(door.userData.light);
+            }
+            scene.remove(door);
+            door = null;
+
+            // Teleport to center and start Phase 2
+            player.position.set(0, 0.5, 0);
+            targetPosition.x = 0;
+            targetPosition.z = 0;
+
+            setTimeout(() => {
+                startPhase2();
+            }, 500);
+        }
+    }
 
     // Phase-specific updates
     if (currentPhase === 2) {
