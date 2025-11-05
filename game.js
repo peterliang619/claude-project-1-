@@ -812,9 +812,48 @@ function checkGraySelfProximity() {
     }
 }
 
+// Add smiling face to the player ball
+function addSmilingFace() {
+    // Create canvas for face texture
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+
+    // Fill with current player color
+    ctx.fillStyle = `rgb(${Math.round(playerColor.r * 255)}, ${Math.round(playerColor.g * 255)}, ${Math.round(playerColor.b * 255)})`;
+    ctx.fillRect(0, 0, 256, 256);
+
+    // Draw eyes
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.arc(85, 90, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(171, 90, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw smiling mouth (curve inward)
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.arc(128, 128, 50, 0, Math.PI, false); // Upward curve for smile
+    ctx.stroke();
+
+    // Create texture from canvas
+    const texture = new THREE.CanvasTexture(canvas);
+
+    // Apply texture to player material
+    player.material.map = texture;
+    player.material.needsUpdate = true;
+}
+
 // Merge spheres and ascend
 function mergeSpheres() {
     const grayColorRGB = { r: 80, g: 80, b: 80 };
+
+    // Add smiling face to player ball
+    addSmilingFace();
 
     // Create ash particles
     const particleCount = 30;
