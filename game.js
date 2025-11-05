@@ -21,7 +21,7 @@ const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
     2: { caption: "Choose the color that feels like you.", prompt: "Hover over a color sphere to select it" },
     3: { caption: "", prompt: "Approach or observe" },
-    4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully" },
+    4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully • Reach the door on the right" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
 };
 
@@ -267,7 +267,7 @@ function onMouseMove(event) {
         targetPosition.z = pos.z;
 
         // Limit movement range
-        const maxRange = currentPhase === 4 ? 2 : 8;
+        const maxRange = currentPhase === 4 ? 20 : 8;
         targetPosition.x = Math.max(-maxRange, Math.min(maxRange, targetPosition.x));
         targetPosition.z = Math.max(-maxRange, Math.min(maxRange, targetPosition.z));
     }
@@ -402,18 +402,18 @@ function selectColor(color) {
     // Create ripple effect
     createRipple();
 
-    // Fade out all spheres (including the chosen one)
+    // Remove all spheres immediately
     colorSpheres.forEach(sphere => {
-        fadeOutSphere(sphere);
+        scene.remove(sphere);
     });
+    colorSpheres = [];
 
     hidePrompt();
 
     // Transition to Phase 3
     setTimeout(() => {
-        colorSpheres = [];
         startPhase3();
-    }, 3000);
+    }, 2000);
 }
 
 // Create ripple effect
@@ -479,9 +479,9 @@ function startPhase4() {
         yellowSphere = null;
     }
 
-    // Reset player position
-    player.position.set(-5, 0.5, 0);
-    targetPosition.x = -5;
+    // Reset player position - start on far left
+    player.position.set(-18, 0.5, 0);
+    targetPosition.x = -18;
     targetPosition.z = 0;
 
     // Remove ground and add reflective plane
@@ -504,8 +504,8 @@ function startPhase4() {
     reflectivePlane.receiveShadow = true;
     scene.add(reflectivePlane);
 
-    // Create bridge
-    const bridgeGeometry = new THREE.BoxGeometry(12, 0.2, 1.5);
+    // Create bridge extending across entire page
+    const bridgeGeometry = new THREE.BoxGeometry(40, 0.2, 1.5);
     const bridgeMaterial = new THREE.MeshStandardMaterial({
         color: 0xf0f0f0,
         emissive: playerColor,
@@ -518,6 +518,28 @@ function startPhase4() {
     bridge.castShadow = true;
     bridge.receiveShadow = true;
     scene.add(bridge);
+
+    // Create glowing door on the right side
+    const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
+    const doorMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.8,
+        roughness: 0.2,
+        metalness: 0.3,
+        transparent: true,
+        opacity: 1
+    });
+    door = new THREE.Mesh(doorGeometry, doorMaterial);
+    door.position.set(18, 1.5, 0);
+    door.castShadow = true;
+    scene.add(door);
+
+    // Add a point light to make the door glow
+    const doorLight = new THREE.PointLight(0xffffff, 1, 10);
+    doorLight.position.copy(door.position);
+    door.userData.light = doorLight;
+    scene.add(doorLight);
 
     // Change background to white
     scene.background = new THREE.Color(0xfafafa);
@@ -533,8 +555,8 @@ function startPhase4() {
 function checkBridgeBounds() {
     if (currentPhase === 4 && bridge) {
         const onBridge = Math.abs(player.position.z) < 0.75 &&
-                        player.position.x > -6 &&
-                        player.position.x < 6;
+                        player.position.x > -20 &&
+                        player.position.x < 20;
 
         if (!onBridge && player.position.y > -5) {
             // Player fell off
@@ -544,17 +566,29 @@ function checkBridgeBounds() {
 
             if (player.position.y <= -5) {
                 // Reset
-                player.position.set(-5, 0.5, 0);
+                player.position.set(-18, 0.5, 0);
                 player.material.opacity = 1.0;
-                targetPosition.x = -5;
+                targetPosition.x = -18;
                 targetPosition.z = 0;
             }
-        } else if (player.position.x > 5.5) {
-            // Reached the end of bridge
-            hidePrompt();
-            setTimeout(() => {
-                startPhase5();
-            }, 1000);
+        } else if (door) {
+            // Check if player reached the door
+            const doorDistance = player.position.distanceTo(door.position);
+            if (doorDistance < 2) {
+                // Player reached the door
+                hidePrompt();
+
+                // Remove door and its light
+                if (door.userData.light) {
+                    scene.remove(door.userData.light);
+                }
+                scene.remove(door);
+                door = null;
+
+                setTimeout(() => {
+                    startPhase5();
+                }, 1000);
+            }
         }
     }
 }
