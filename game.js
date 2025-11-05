@@ -916,7 +916,7 @@ function animate() {
             }, 1000);
         } else if (distance > 15) {
             // Drifted past
-            showCaption("Peace also lives in solitude.", 3000);
+            showCaption("There's always tough times in life.", 3000);
             hidePrompt();
             scene.remove(yellowSphere);
             yellowSphere = null;
