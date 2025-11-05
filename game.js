@@ -1124,5 +1124,23 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Start the experience
-init();
+// Start button handler
+document.getElementById('start-button').addEventListener('click', function() {
+    // Get audio element
+    const music = document.getElementById('background-music');
+
+    // Play music
+    music.volume = 0.4; // Set volume (0.0 to 1.0)
+    music.play().catch(error => {
+        console.log('Audio playback failed:', error);
+    });
+
+    // Hide start screen
+    const startScreen = document.getElementById('start-screen');
+    startScreen.classList.add('hidden');
+
+    // Start the game after fade out
+    setTimeout(() => {
+        init();
+    }, 1000);
+});
