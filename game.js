@@ -434,13 +434,13 @@ function startPhase2() {
 
     // Wait a moment before showing first caption (like Phase 1)
     setTimeout(() => {
-        showCaption(phases[2].caption, 2000); // Shorter duration - 2 seconds
+        showCaption(phases[2].caption, 3000); // 3 seconds duration
     }, 500);
 
     // Show apology caption after first caption (matching Phase 1 pattern)
     setTimeout(() => {
         showCaption("Sorry if your color is not here.", 4000);
-    }, 2500);
+    }, 3500);
 }
 
 // Get color name from hex value
