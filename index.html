@@ -71,50 +71,22 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(232, 232, 232, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            cursor: pointer;
             z-index: 1000;
-            transition: opacity 1s ease;
+            transition: opacity 1.5s ease;
         }
 
         #start-screen.hidden {
             opacity: 0;
             pointer-events: none;
         }
-
-        #start-button {
-            padding: 20px 40px;
-            font-size: 18px;
-            font-weight: 300;
-            color: rgba(80, 80, 80, 1);
-            background: transparent;
-            border: 2px solid rgba(80, 80, 80, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        #start-button:hover {
-            background: rgba(80, 80, 80, 0.1);
-            border-color: rgba(80, 80, 80, 0.8);
-        }
-
-        #start-title {
-            font-size: 32px;
-            font-weight: 300;
-            color: rgba(80, 80, 80, 1);
-            margin-bottom: 40px;
-        }
     </style>
 </head>
 <body>
-    <div id="start-screen">
-        <div id="start-title">Meditative Journey</div>
-        <button id="start-button">Begin Experience</button>
-    </div>
+    <div id="start-screen"></div>
 
     <div id="canvas-container"></div>
     <div id="caption"></div>

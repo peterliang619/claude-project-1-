@@ -1124,8 +1124,8 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Start button handler
-document.getElementById('start-button').addEventListener('click', function() {
+// Start screen click handler
+document.getElementById('start-screen').addEventListener('click', function() {
     // Get audio element
     const music = document.getElementById('background-music');
 
@@ -1142,5 +1142,5 @@ document.getElementById('start-button').addEventListener('click', function() {
     // Start the game after fade out
     setTimeout(() => {
         init();
-    }, 1000);
+    }, 1500);
 });
