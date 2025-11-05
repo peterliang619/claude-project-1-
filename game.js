@@ -94,7 +94,7 @@ function init() {
 
     // Show follow-up message after a pause
     setTimeout(() => {
-        showCaption("Go forward when you're ready. I got your back.", 0);
+        showCaption("Go forward when you're ready. I got your back.", 5000); // Fade out after 5 seconds
         // Create the door after this message
         createDoor();
     }, 4000);
