@@ -86,9 +86,16 @@ function init() {
 
     // Show initial caption
     showCaption(phases[1].caption);
+
+    // Show follow-up message after a pause
+    setTimeout(() => {
+        showCaption("Go forward when you're ready. I'm at your back.", 0);
+    }, 4000);
+
+    // Show interaction prompt
     setTimeout(() => {
         showPrompt(phases[1].prompt);
-    }, 2000);
+    }, 7000);
 
     // Start animation loop
     animate();
