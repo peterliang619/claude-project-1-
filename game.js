@@ -17,6 +17,8 @@ let isAscending = false;
 let door = null;
 let phase4StartTime = null;
 let phase4PauseDuration = 2000; // 2 seconds pause
+let phase5StartTime = null;
+let phase5PauseDuration = 3000; // 3 seconds pause
 
 // Phase management
 const phases = {
@@ -263,6 +265,15 @@ function onMouseMove(event) {
         if (currentPhase === 4 && phase4StartTime) {
             const elapsed = Date.now() - phase4StartTime;
             if (elapsed < phase4PauseDuration) {
+                // Still in pause, don't update target position
+                return;
+            }
+        }
+
+        // Check if Phase 5 is in pause period
+        if (currentPhase === 5 && phase5StartTime) {
+            const elapsed = Date.now() - phase5StartTime;
+            if (elapsed < phase5PauseDuration) {
                 // Still in pause, don't update target position
                 return;
             }
@@ -701,6 +712,7 @@ function checkBridgeBounds() {
 // Phase 5: Reunion and Ascension
 function startPhase5() {
     currentPhase = 5;
+    phase5StartTime = Date.now(); // Start 3-second pause
 
     // Remove bridge
     if (bridge) {
