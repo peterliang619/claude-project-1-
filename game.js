@@ -414,6 +414,17 @@ function startPhase2() {
     }, 7000);
 }
 
+// Get color name from hex value
+function getColorName(colorHex) {
+    const colorMap = {
+        0xffe66d: "Yellow",
+        0xff6b6b: "Red",
+        0x4ecdc4: "Blue",
+        0xc492e8: "Purple"
+    };
+    return colorMap[colorHex] || "Color";
+}
+
 // Select a color
 function selectColor(color) {
     playerColor = new THREE.Color(color);
@@ -431,12 +442,18 @@ function selectColor(color) {
 
     hidePrompt();
 
-    // Show new caption
+    // Show color name caption first
+    const colorName = getColorName(color);
     setTimeout(() => {
-        showCaption("Always be who you are, I love you.", 0);
+        showCaption(`${colorName} looks great on you...`, 0);
     }, 500);
 
-    // Create door at the top after caption
+    // Show affirmation caption after
+    setTimeout(() => {
+        showCaption("Always be who you are, I love you.", 0);
+    }, 3500);
+
+    // Create door at the top after both captions
     setTimeout(() => {
         const doorGeometry = new THREE.BoxGeometry(2, 3, 0.3);
         const doorMaterial = new THREE.MeshStandardMaterial({
@@ -470,7 +487,7 @@ function selectColor(color) {
                 clearInterval(fadeIn);
             }
         }, 30);
-    }, 3500);
+    }, 6000);
 }
 
 // Create ripple effect
