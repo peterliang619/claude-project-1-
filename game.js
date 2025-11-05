@@ -894,14 +894,9 @@ function mergeSpheres() {
         showCaption("You were never alone.", 0, grayColorRGB);
     }, 6500);
 
-    // Start ascension
-    setTimeout(() => {
-        isAscending = true;
-    }, 5000);
-
     // Final message
     setTimeout(() => {
-        showCaption("I love you.", 0);
+        showCaption("I love you.", 0, grayColorRGB);
     }, 10000);
 }
 
@@ -1077,36 +1072,6 @@ function animate() {
 
     if (currentPhase === 5) {
         checkGraySelfProximity();
-
-        // Ascension
-        if (isAscending) {
-            player.position.y += 0.015;
-
-            // Create light trail during ascension
-            if (Math.random() < 0.2) {
-                const trailGeometry = new THREE.SphereGeometry(0.08, 8, 8);
-                const trailMaterial = new THREE.MeshBasicMaterial({
-                    color: playerColor,
-                    transparent: true,
-                    opacity: 0.5
-                });
-                const trail = new THREE.Mesh(trailGeometry, trailMaterial);
-                trail.position.copy(player.position);
-                trail.userData.life = 1.0;
-                scene.add(trail);
-                trails.push(trail);
-            }
-
-            // Fade out as it ascends
-            if (player.position.y > 15) {
-                player.material.opacity -= 0.005;
-                player.material.transparent = true;
-
-                if (player.material.opacity <= 0) {
-                    scene.remove(player);
-                }
-            }
-        }
     }
 
     // Update ripples
