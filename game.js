@@ -728,6 +728,9 @@ function startPhase5() {
     phase5StartTime = Date.now(); // Start pause until after "Can we hug?"
     phase5PauseDuration = 17500; // Pause for entire dialogue sequence
 
+    // Add smiling face to player ball when entering Phase 5
+    addSmilingFace();
+
     // Remove bridge
     if (bridge) {
         scene.remove(bridge);
@@ -851,9 +854,6 @@ function addSmilingFace() {
 // Merge spheres and ascend
 function mergeSpheres() {
     const grayColorRGB = { r: 80, g: 80, b: 80 };
-
-    // Add smiling face to player ball
-    addSmilingFace();
 
     // Create ash particles
     const particleCount = 30;
