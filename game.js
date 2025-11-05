@@ -393,17 +393,17 @@ function startPhase2() {
         colorSpheres.push(sphere);
     });
 
-    // Show first caption with duration so it fades out
-    showCaption(phases[2].caption, 2500);
+    // Show first caption with shorter duration
+    showCaption(phases[2].caption, 2000);
 
     // Show apology caption after the first fades out
     setTimeout(() => {
         showCaption("Sorry if your color is not here.", 0);
-    }, 3000);
+    }, 2300);
 
     setTimeout(() => {
         showPrompt(phases[2].prompt);
-    }, 5500);
+    }, 4500);
 }
 
 // Select a color
