@@ -939,10 +939,8 @@ function animate() {
             player.rotation.z -= dx * rotationSpeed;
         }
 
-        // Create trail in Phase 1
-        if (currentPhase === 1) {
-            createTrail();
-        }
+        // Create trail in all phases
+        createTrail();
     }
 
     // Update trails
