@@ -19,6 +19,7 @@ let phase4StartTime = null;
 let phase4PauseDuration = 2000; // 2 seconds pause
 let phase5StartTime = null;
 let phase5PauseDuration = 3000; // 3 seconds pause
+let isRespawning = false; // Track if ball is rising back up
 
 // Phase management
 const phases = {
@@ -256,8 +257,12 @@ function onMouseMove(event) {
 
     // Convert mouse position to 3D world position
     if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3 || currentPhase === 4 || currentPhase === 5) {
-        // Check if Phase 4 is in pause period
-        if (currentPhase === 4 && phase4StartTime) {
+        // Check if Phase 4 is in pause period or respawning
+        if (currentPhase === 4 && (isRespawning || phase4StartTime)) {
+            if (isRespawning) {
+                // Don't update target during respawn
+                return;
+            }
             const elapsed = Date.now() - phase4StartTime;
             if (elapsed < phase4PauseDuration) {
                 // Still in pause, don't update target position
@@ -667,22 +672,38 @@ function checkBridgeBounds() {
                         player.position.x > -12.5 &&
                         player.position.x < 12.5;
 
-        if (!onBridge && player.position.y > -5) {
+        if (!onBridge && !isRespawning) {
             // Player fell off - faster fall
             player.position.y -= 0.15;
             player.material.opacity = Math.max(0, player.material.opacity - 0.06);
             player.material.transparent = true;
 
             if (player.position.y <= -5) {
-                // Reset - respawn closer to center
-                player.position.set(-10, 0.5, 0);
-                player.material.opacity = 1.0;
+                // Start respawn - move to spawn horizontally and begin rising
+                isRespawning = true;
+                player.position.x = -10;
+                player.position.z = 0;
                 targetPosition.x = -10;
                 targetPosition.z = 0;
+            }
+        }
+
+        // Handle respawning (rising back up)
+        if (isRespawning) {
+            player.position.y += 0.1; // Rise up
+            player.material.opacity = Math.min(1.0, player.material.opacity + 0.04); // Fade in
+
+            if (player.position.y >= 0.5) {
+                // Respawn complete
+                player.position.y = 0.5;
+                player.material.opacity = 1.0;
+                isRespawning = false;
                 // Restart pause timer for respawn
                 phase4StartTime = Date.now();
             }
-        } else if (door) {
+        }
+
+        if (door && !isRespawning) {
             // Check if player reached the door
             const doorDistance = player.position.distanceTo(door.position);
             if (doorDistance < 3) {
