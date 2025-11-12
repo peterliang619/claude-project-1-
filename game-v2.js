@@ -589,25 +589,11 @@ function startPhase4() {
     targetPosition.x = -10;
     targetPosition.z = 0;
 
-    // Remove ground and add reflective plane
+    // Remove ground
     const ground = scene.getObjectByName('ground');
     if (ground) {
         scene.remove(ground);
     }
-
-    const reflectiveGeometry = new THREE.PlaneGeometry(100, 100);
-    const reflectiveMaterial = new THREE.MeshStandardMaterial({
-        color: playerColor,
-        roughness: 0.3,
-        metalness: 0.7,
-        opacity: 0.3,
-        transparent: true
-    });
-    const reflectivePlane = new THREE.Mesh(reflectiveGeometry, reflectiveMaterial);
-    reflectivePlane.rotation.x = -Math.PI / 2;
-    reflectivePlane.position.y = -1;
-    reflectivePlane.receiveShadow = true;
-    scene.add(reflectivePlane);
 
     // Create bridge - shorter and more centered
     const bridgeGeometry = new THREE.BoxGeometry(25, 0.2, 1.5);
