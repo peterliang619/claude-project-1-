@@ -917,19 +917,19 @@ function mergeSpheres() {
         showCaption("You were never alone.", 4000, grayColorRGB);
     }, 6500);
 
-    // Final message - show for 5 seconds (accounting for 2s fade in + 5s display + 2s fade out)
+    // Final message - show for 3 seconds (accounting for 2s fade in + 3s display + 2s fade out)
     setTimeout(() => {
-        showCaption("I love you.", 7000, grayColorRGB);
+        showCaption("I love you.", 5000, grayColorRGB);
     }, 11000);
 
     // Show thank you screen after "I love you" has fully faded out
-    // Timeline: 11000ms (start) + 2000ms (fade in) + 5000ms (visible) + 2000ms (fade out) = 20000ms
+    // Timeline: 11000ms (start) + 2000ms (fade in) + 3000ms (visible) + 2000ms (fade out) = 18000ms
     setTimeout(() => {
         const thankYouScreen = document.getElementById('thank-you-screen');
         if (thankYouScreen) {
             thankYouScreen.classList.add('visible');
         }
-    }, 20000);
+    }, 18000);
 }
 
 // Animation loop
