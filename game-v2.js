@@ -9,7 +9,6 @@ let currentPhase = 1;
 let playerColor = new THREE.Color(0x808080); // Start gray
 let trails = [];
 let colorSpheres = [];
-let yellowSphere = null;
 let bridge = null;
 let graySelf = null;
 let hasMerged = false;
@@ -25,7 +24,6 @@ let isRespawning = false; // Track if ball is rising back up
 const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
     2: { caption: "Choose the color that feels like you.", prompt: "Hover over a color and click to select" },
-    3: { caption: "", prompt: "Approach or observe" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully • Reach the door on the right" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
 };
@@ -256,7 +254,7 @@ function onMouseMove(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     // Convert mouse position to 3D world position
-    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3 || currentPhase === 4 || currentPhase === 5) {
+    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 4 || currentPhase === 5) {
         // Check if Phase 4 is in pause period or respawning
         if (currentPhase === 4 && (isRespawning || phase4StartTime)) {
             if (isRespawning) {
@@ -547,42 +545,10 @@ function fadeOutSphere(sphere) {
     sphere.userData.fadingOut = true;
 }
 
-// Phase 3: Yellow sphere encounter
-function startPhase3() {
-    currentPhase = 3;
-
-    // Clear fog more
-    scene.fog.near = 20;
-    scene.fog.far = 50;
-
-    // Change background to lighter
-    scene.background = new THREE.Color(0xe8e8e8);
-
-    // Create yellow sphere in the distance
-    const geometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xffd700,
-        emissive: 0xffd700,
-        emissiveIntensity: 0.3,
-        roughness: 0.7,
-        metalness: 0.2
-    });
-    yellowSphere = new THREE.Mesh(geometry, material);
-    yellowSphere.position.set(8, 0.5, 8);
-    yellowSphere.castShadow = true;
-    scene.add(yellowSphere);
-}
-
 // Phase 4: The Bridge
 function startPhase4() {
     currentPhase = 4;
     phase4StartTime = Date.now(); // Start pause timer
-
-    // Remove any remaining objects
-    if (yellowSphere) {
-        scene.remove(yellowSphere);
-        yellowSphere = null;
-    }
 
     // Reset player position - start closer to center
     player.position.set(-10, 0.5, 0);
@@ -1019,7 +985,7 @@ function animate() {
         if (door && colorSpheres.length === 0) {
             const doorDistance = player.position.distanceTo(door.position);
             if (doorDistance < 2) {
-                // Player touched the door - go to Phase 3
+                // Player touched the door - go to Phase 4
                 hidePrompt();
 
                 // Fade out door
@@ -1030,58 +996,12 @@ function animate() {
                 door = null;
 
                 setTimeout(() => {
-                    startPhase3();
+                    startPhase4();
                 }, 500);
             }
         }
     }
 
-    if (currentPhase === 3 && yellowSphere) {
-        // Move yellow sphere slowly toward player
-        const direction = new THREE.Vector3().subVectors(player.position, yellowSphere.position).normalize();
-        yellowSphere.position.add(direction.multiplyScalar(0.01));
-
-        // Check for merge
-        const distance = player.position.distanceTo(yellowSphere.position);
-        if (distance < 1.5) {
-            // Merge - increase saturation
-            player.material.color.multiplyScalar(1.5);
-
-            // Create glow
-            const glowLight = new THREE.PointLight(0xffd700, 1.5, 10);
-            glowLight.position.copy(player.position);
-            scene.add(glowLight);
-
-            showCaption("Hope you feel better.", 3000);
-            hidePrompt();
-
-            // Remove yellow sphere
-            setTimeout(() => {
-                scene.remove(yellowSphere);
-                yellowSphere = null;
-                // Move to Phase 4
-                setTimeout(() => {
-                    startPhase4();
-                }, 3000);
-            }, 1000);
-        } else if (distance > 15) {
-            // Drifted past
-            showCaption("There's always tough times in life.", 3000);
-            hidePrompt();
-            scene.remove(yellowSphere);
-            yellowSphere = null;
-
-            // Show second caption after first one
-            setTimeout(() => {
-                showCaption("But we need to get through it.", 3000);
-            }, 3500);
-
-            // Transition to Phase 4
-            setTimeout(() => {
-                startPhase4();
-            }, 7500);
-        }
-    }
 
     if (currentPhase === 4) {
         checkBridgeBounds();
