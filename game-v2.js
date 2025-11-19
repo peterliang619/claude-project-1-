@@ -610,8 +610,8 @@ function startPhase4() {
         }
     }, 30);
 
-    // Change background to white
-    scene.background = new THREE.Color(0xfafafa);
+    // Change background to lighter gray
+    scene.background = new THREE.Color(0xe5e5e5);
     scene.fog = null;
 
     showCaption(phases[4].caption);
@@ -682,6 +682,9 @@ function startPhase5() {
     currentPhase = 5;
     phase5StartTime = Date.now(); // Start pause until after "Can we hug?"
     phase5PauseDuration = 17500; // Pause for entire dialogue sequence
+
+    // Change background to white for final phase
+    scene.background = new THREE.Color(0xfafafa);
 
     // Add smiling face to player ball when entering Phase 5
     addSmilingFace();
