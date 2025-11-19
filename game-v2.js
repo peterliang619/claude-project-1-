@@ -917,9 +917,9 @@ function mergeSpheres() {
         showCaption("You were never alone.", 4000, grayColorRGB);
     }, 6500);
 
-    // Final message - stays forever
+    // Final message - displays for 3 seconds
     setTimeout(() => {
-        showCaption("I love you.", 0, grayColorRGB);
+        showCaption("I love you.", 3000, grayColorRGB);
     }, 11000);
 }
 
