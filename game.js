@@ -917,9 +917,9 @@ function mergeSpheres() {
         showCaption("You were never alone.", 4000, grayColorRGB);
     }, 6500);
 
-    // Final message - displays for 3 seconds
+    // Final message - displays for 4 seconds
     setTimeout(() => {
-        showCaption("I love you.", 3000, grayColorRGB);
+        showCaption("I love you.", 4000, grayColorRGB);
     }, 11000);
 
     // Show thank you screen after "I love you" completes
@@ -928,7 +928,23 @@ function mergeSpheres() {
         if (thankYouScreen) {
             thankYouScreen.classList.add('visible');
         }
-    }, 14000); // 11000ms + 3000ms
+
+        // Fade in first message after 1 second
+        setTimeout(() => {
+            const firstMessage = document.getElementById('thank-you-message-1');
+            if (firstMessage) {
+                firstMessage.classList.add('visible');
+            }
+        }, 1000);
+
+        // Fade in second message after 2.5 seconds
+        setTimeout(() => {
+            const secondMessage = document.getElementById('thank-you-message-2');
+            if (secondMessage) {
+                secondMessage.classList.add('visible');
+            }
+        }, 2500);
+    }, 15000); // 11000ms + 4000ms
 }
 
 // Animation loop
