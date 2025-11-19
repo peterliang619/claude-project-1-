@@ -94,11 +94,47 @@
             letter-spacing: 8px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        #thank-you-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2000;
+            transition: opacity 2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #thank-you-screen.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #thank-you-message {
+            font-size: 36px;
+            font-weight: 200;
+            color: rgba(80, 80, 80, 0.9);
+            letter-spacing: 4px;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
     </style>
 </head>
 <body>
     <div id="start-screen">
         <div id="start-title">SELF.</div>
+    </div>
+
+    <div id="thank-you-screen">
+        <div id="thank-you-message">Thank You</div>
     </div>
 
     <div id="canvas-container"></div>

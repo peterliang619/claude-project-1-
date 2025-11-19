@@ -921,6 +921,14 @@ function mergeSpheres() {
     setTimeout(() => {
         showCaption("I love you.", 3000, grayColorRGB);
     }, 11000);
+
+    // Show thank you screen after "I love you" completes
+    setTimeout(() => {
+        const thankYouScreen = document.getElementById('thank-you-screen');
+        if (thankYouScreen) {
+            thankYouScreen.classList.add('visible');
+        }
+    }, 14000); // 11000ms + 3000ms
 }
 
 // Animation loop
