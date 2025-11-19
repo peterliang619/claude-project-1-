@@ -737,6 +737,11 @@ function startPhase5() {
     targetPosition.x = -3;
     targetPosition.z = 0;
 
+    // Reset player visibility and respawn state
+    player.material.opacity = 1.0;
+    player.material.transparent = false;
+    isRespawning = false;
+
     // Create gray version of self
     const geometry = new THREE.SphereGeometry(0.5, 32, 32);
     const grayMaterial = new THREE.MeshStandardMaterial({
