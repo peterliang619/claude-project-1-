@@ -24,6 +24,7 @@ let isRespawning = false; // Track if ball is rising back up
 const phases = {
     1: { caption: "It's okay to feel lost.", prompt: "Move your cursor to guide the sphere • Touch the door to continue" },
     2: { caption: "Choose the color that feels like you.", prompt: "Hover over a color and click to select" },
+    3: { caption: "There's always tough times in life.", prompt: "" },
     4: { caption: "If you fall, I'll catch you.", prompt: "Cross the bridge carefully • Reach the door on the right" },
     5: { caption: "Can we hug?", prompt: "Approach your past self" }
 };
@@ -254,7 +255,7 @@ function onMouseMove(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     // Convert mouse position to 3D world position
-    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 4 || currentPhase === 5) {
+    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3 || currentPhase === 4 || currentPhase === 5) {
         // Check if Phase 4 is in pause period or respawning
         if (currentPhase === 4 && (isRespawning || phase4StartTime)) {
             if (isRespawning) {
@@ -543,6 +544,32 @@ function createRipple() {
 // Fade out sphere
 function fadeOutSphere(sphere) {
     sphere.userData.fadingOut = true;
+}
+
+// Phase 3: Reflection moment (captions only, no yellow sphere)
+function startPhase3() {
+    currentPhase = 3;
+
+    // Clear fog more
+    scene.fog.near = 20;
+    scene.fog.far = 50;
+
+    // Change background to lighter gray (intermediate step)
+    scene.background = new THREE.Color(0xe0e0e0);
+
+    // Show first caption
+    showCaption("There's always tough times in life.", 3000);
+    hidePrompt();
+
+    // Show second caption after first one
+    setTimeout(() => {
+        showCaption("But we need to get through it.", 3000);
+    }, 3500);
+
+    // Transition to Phase 4 (Bridge)
+    setTimeout(() => {
+        startPhase4();
+    }, 7500);
 }
 
 // Phase 4: The Bridge
@@ -988,7 +1015,7 @@ function animate() {
         if (door && colorSpheres.length === 0) {
             const doorDistance = player.position.distanceTo(door.position);
             if (doorDistance < 2) {
-                // Player touched the door - go to Phase 4
+                // Player touched the door - go to Phase 3
                 hidePrompt();
 
                 // Fade out door
@@ -999,7 +1026,7 @@ function animate() {
                 door = null;
 
                 setTimeout(() => {
-                    startPhase4();
+                    startPhase3();
                 }, 500);
             }
         }
