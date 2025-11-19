@@ -917,10 +917,18 @@ function mergeSpheres() {
         showCaption("You were never alone.", 4000, grayColorRGB);
     }, 6500);
 
-    // Final message - stays forever
+    // Final message - show for 5 seconds
     setTimeout(() => {
-        showCaption("I love you.", 0, grayColorRGB);
+        showCaption("I love you.", 5000, grayColorRGB);
     }, 11000);
+
+    // Show thank you screen after "I love you" has been displayed for 5 seconds
+    setTimeout(() => {
+        const thankYouScreen = document.getElementById('thank-you-screen');
+        if (thankYouScreen) {
+            thankYouScreen.classList.add('visible');
+        }
+    }, 16000); // 11000ms (wait for "I love you") + 5000ms (display duration)
 }
 
 // Animation loop
